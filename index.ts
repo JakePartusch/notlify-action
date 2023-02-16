@@ -1,6 +1,6 @@
 import * as github from "@actions/github";
 import * as core from "@actions/core";
-import { $, echo, path, cd, fs } from "zx";
+import { $, path, cd, fs } from "zx";
 import fetch, { Headers } from "node-fetch";
 
 const CONTROL_PLANE_API =
