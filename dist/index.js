@@ -26346,14 +26346,15 @@ const getDeployment = async (applicationId, deploymentId, apiKey) => {
 };
 const waitForDeployment = async (applicationId, deploymentId, apiKey, MAX_TIMEOUT) => {
     const iterations = MAX_TIMEOUT / 2;
-    console.log("Deployment pending...");
+    let dots = "...";
     for (let i = 0; i < iterations; i++) {
+        dots += ".";
         const deployment = await getDeployment(applicationId, deploymentId, apiKey);
         if (deployment.status === "COMPLETE") {
             console.log("Deployment complete!");
             return;
         }
-        console.log("...");
+        process.stdout.write(`Deployment pending${dots}`);
         await new Promise((r) => setTimeout(r, 2000));
     }
     core.setFailed(`Timeout reached: Unable to find status of ${deploymentId}`);
