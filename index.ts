@@ -91,6 +91,7 @@ const waitForDeployment = async (
 ) => {
   const iterations = MAX_TIMEOUT / 2;
   let dots = "...";
+  process.stdout.write("Deployment pending");
   for (let i = 0; i < iterations; i++) {
     dots += ".";
     const deployment = await getDeployment(applicationId, deploymentId, apiKey);
@@ -98,7 +99,7 @@ const waitForDeployment = async (
       console.log("Deployment complete!");
       return;
     }
-    process.stdout.write(`Deployment pending${dots}`);
+    process.stdout.write(".");
     await new Promise((r) => setTimeout(r, 2000));
   }
   core.setFailed(`Timeout reached: Unable to find status of ${deploymentId}`);
