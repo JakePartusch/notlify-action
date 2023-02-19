@@ -46,10 +46,12 @@ interface DeploymentResponse {
 
 const getDeployment = async (
   applicationId: string,
-  deploymentId: string
+  deploymentId: string,
+  apiKey: string
 ): Promise<Deployment> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("Authorization", `APIKEY ${apiKey}`);
   const getDeploymentRequest = JSON.stringify({
     query:
       "query GetDeployment($input: GetDeploymentInput!) {\n  getDeployment(input: $input) {\n    commitHash\n    id\n    status\n  }\n}\n\n                                                                    \n                                                                                  \n    \n   \n \n",
@@ -84,12 +86,13 @@ const getDeployment = async (
 const waitForDeployment = async (
   applicationId: string,
   deploymentId: string,
+  apiKey: string,
   MAX_TIMEOUT: number
 ) => {
   const iterations = MAX_TIMEOUT / 2;
   console.log("Deployment pending...");
   for (let i = 0; i < iterations; i++) {
-    const deployment = await getDeployment(applicationId, deploymentId);
+    const deployment = await getDeployment(applicationId, deploymentId, apiKey);
     if (deployment.status === "COMPLETE") {
       console.log("Deployment complete!");
       return;
@@ -103,6 +106,7 @@ const waitForDeployment = async (
 (async () => {
   const DIST_FOLDER = core.getInput("distributionDirectory");
   const APP_NAME = core.getInput("applicationName");
+  const API_KEY = core.getInput("apiKey");
   const hash = github.context.sha;
 
   const rootDir = $.cwd ?? "./";
@@ -114,6 +118,7 @@ const waitForDeployment = async (
 
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("Authorization", `APIKEY ${API_KEY}`);
 
   const graphql = JSON.stringify({
     query:
@@ -175,6 +180,7 @@ const waitForDeployment = async (
   await waitForDeployment(
     applicationResponse.data.getApplication.id,
     result.data.initiateDeployment.id,
+    API_KEY,
     60 * 10
   );
 })();

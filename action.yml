@@ -7,6 +7,9 @@ inputs:
   distributionDirectory:
     description: "The location of the built assets"
     required: true
+  apiKey:
+    description: "The api key to the application"
+    required: true
 
 runs:
   using: "node16"

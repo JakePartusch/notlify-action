@@ -26318,9 +26318,10 @@ const core = __importStar(__nccwpck_require__(2186));
 const zx_1 = __nccwpck_require__(6163);
 const node_fetch_1 = __importStar(__nccwpck_require__(2223));
 const CONTROL_PLANE_API = "https://600376vtqg.execute-api.us-east-1.amazonaws.com/api";
-const getDeployment = async (applicationId, deploymentId) => {
+const getDeployment = async (applicationId, deploymentId, apiKey) => {
     const myHeaders = new node_fetch_1.Headers();
     myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", `APIKEY ${apiKey}`);
     const getDeploymentRequest = JSON.stringify({
         query: "query GetDeployment($input: GetDeploymentInput!) {\n  getDeployment(input: $input) {\n    commitHash\n    id\n    status\n  }\n}\n\n                                                                    \n                                                                                  \n    \n   \n \n",
         variables: {
@@ -26343,11 +26344,11 @@ const getDeployment = async (applicationId, deploymentId) => {
     }
     return deploymentResponse.data.getDeployment;
 };
-const waitForDeployment = async (applicationId, deploymentId, MAX_TIMEOUT) => {
+const waitForDeployment = async (applicationId, deploymentId, apiKey, MAX_TIMEOUT) => {
     const iterations = MAX_TIMEOUT / 2;
     console.log("Deployment pending...");
     for (let i = 0; i < iterations; i++) {
-        const deployment = await getDeployment(applicationId, deploymentId);
+        const deployment = await getDeployment(applicationId, deploymentId, apiKey);
         if (deployment.status === "COMPLETE") {
             console.log("Deployment complete!");
             return;
@@ -26360,6 +26361,7 @@ const waitForDeployment = async (applicationId, deploymentId, MAX_TIMEOUT) => {
 (async () => {
     const DIST_FOLDER = core.getInput("distributionDirectory");
     const APP_NAME = core.getInput("applicationName");
+    const API_KEY = core.getInput("apiKey");
     const hash = github.context.sha;
     const rootDir = zx_1.$.cwd ?? "./";
     const zipLocation = zx_1.path.join(rootDir, `${hash}.zip`);
@@ -26369,6 +26371,7 @@ const waitForDeployment = async (applicationId, deploymentId, MAX_TIMEOUT) => {
     (0, zx_1.cd)(rootDir);
     const myHeaders = new node_fetch_1.Headers();
     myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", `APIKEY ${API_KEY}`);
     const graphql = JSON.stringify({
         query: "mutation InitiateDeployment($input: InitiateDeploymentInput!) {\n  initiateDeployment(input: $input) {\n    commitHash\n    deploymentUploadLocation\n    id\n    status\n  }\n}",
         variables: { input: { applicationName: APP_NAME, commitHash: `${hash}` } },
@@ -26411,7 +26414,7 @@ const waitForDeployment = async (applicationId, deploymentId, MAX_TIMEOUT) => {
         console.error(`Unable to fetch application: ${applicationResponse.errors?.[0]?.message}`);
         throw new Error("Unable to fetch application");
     }
-    await waitForDeployment(applicationResponse.data.getApplication.id, result.data.initiateDeployment.id, 60 * 10);
+    await waitForDeployment(applicationResponse.data.getApplication.id, result.data.initiateDeployment.id, API_KEY, 60 * 10);
 })();
 
 
