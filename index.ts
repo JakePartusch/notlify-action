@@ -143,6 +143,7 @@ const waitForDeployment = async (
     throw new Error("Unable to initiate deployment");
   }
   console.log("Deployment started");
+  console.log(JSON.stringify(result, null, 2));
   const presignedUrl = result.data.initiateDeployment.deploymentUploadLocation;
 
   const file = await fs.readFileSync(path.join(rootDir, `${hash}.zip`));
