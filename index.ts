@@ -4,7 +4,7 @@ import { $, path, cd, fs } from "zx";
 import fetch, { Headers } from "node-fetch";
 
 const CONTROL_PLANE_API =
-  "https://600376vtqg.execute-api.us-east-1.amazonaws.com/api";
+  "https://vt2t2uctaf.execute-api.us-east-1.amazonaws.com";
 
 interface InitiateDeploymentResponse {
   data: {

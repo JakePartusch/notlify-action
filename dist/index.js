@@ -26317,7 +26317,7 @@ const github = __importStar(__nccwpck_require__(5438));
 const core = __importStar(__nccwpck_require__(2186));
 const zx_1 = __nccwpck_require__(6163);
 const node_fetch_1 = __importStar(__nccwpck_require__(2223));
-const CONTROL_PLANE_API = "https://600376vtqg.execute-api.us-east-1.amazonaws.com/api";
+const CONTROL_PLANE_API = "https://vt2t2uctaf.execute-api.us-east-1.amazonaws.com";
 const getDeployment = async (applicationId, deploymentId, apiKey) => {
     const myHeaders = new node_fetch_1.Headers();
     myHeaders.append("Content-Type", "application/json");
